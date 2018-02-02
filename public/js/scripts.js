@@ -131,14 +131,14 @@ const postProject = async (event) => {
       body: JSON.stringify({name: projectName})
     })
     const response = await newProjectPost.json()
-    const paletteName= paletteObj.name
     const newPalettePost = await fetch(`/api/v1/projects/${response.id}/palettes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({...paletteObj, name: paletteName})
+      body: JSON.stringify({...paletteObj})
     })
+    sendMessage(paletteObj.name);
 
   } else {
     const newPalettePost = await fetch(`/api/v1/projects/${existingProject.id}/palettes`, {
@@ -153,6 +153,7 @@ const postProject = async (event) => {
 
   $('.project-holder').children().remove()
   fetchProjects()
+  
 }
 
 const deletePalette = async (event) => {
@@ -164,10 +165,10 @@ const deletePalette = async (event) => {
   }
 }
 
-const sendMessageToSync = markdown => {
+const sendMessage = palette => {
   navigator.serviceWorker.controller.postMessage({ 
     type: 'add-palette',
-    message: 'You added a palette'
+    palette: palette
   });
 };
 
