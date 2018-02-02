@@ -36,14 +36,17 @@ const changeLock = (event) => {
 }
 
 const fetchProjects = async() => {
-  const initialFetch = await fetch('/api/v1/projects', {
+  try {const initialFetch = await fetch('/api/v1/projects', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     }
   })
   const projectResponse = await initialFetch.json()
-  fetchPalettes(projectResponse.projects)
+  fetchPalettes(projectResponse.projects)}
+  catch(error){
+    throw error
+  }
 }
 
 const fetchPalettes = async(projectsArray) => {
@@ -61,40 +64,38 @@ const mapPalettesToProject = (projects, palettes) => {
 }
 
 const appendProjects = (projectsArray) => {
-  projects = projectsArray
-  projectsArray.forEach((project, index) => {
-    const removeChars = RegExp(/\W+/)
-    const projectName = project.name.replace(removeChars, '')
-    $('.project-holder').append(`<h5>${projectName}</h5>
-     <div class='project ${projectName}'></div>`)
-    project.palettes.forEach(palette => {
-      const paletteName= palette.name.replace(removeChars, '')
-      $(`.${project.name}`).append(`
-      <div class='palette'>
-        <div class='delete-btn'></div>
-        <h4>${paletteName}</h4>
-        <div class='palette-card ${paletteName}'>
-          <div class='palette-color color1'></div>
-          <div class='palette-color color2'></div>
-          <div class='palette-color color3'></div>
-          <div class='palette-color color4'></div>
-          <div class='palette-color color5'></div>
-        </div>
+  projects= projectsArray
+  projectsArray.forEach((project) => {
+    $('.project-holder').append(`
+      <h5 class='project-name'>${project.name}</h5>
+      <div id='${project.id}' class='project'>
       </div>`)
-      
-      $(`.${palette.name}`).find('.color1').css('background-color', palette.color_1)
-      $(`.${palette.name}`).find('.color2').css('background-color', palette.color_2)
-      $(`.${palette.name}`).find('.color3').css('background-color', palette.color_3)
-      $(`.${palette.name}`).find('.color4').css('background-color', palette.color_4)
-      $(`.${palette.name}`).find('.color5').css('background-color', palette.color_5)
+    project.palettes.forEach(palette => {
+      $(`#${project.id}`).append(`
+        <div class='palette'>
+          <div class='delete-btn' id='${palette.id}'></div>
+          <h4>${palette.name}</h4>
+          <div class='palette-card' id='${palette.id}'>
+            <div class='palette-color' id='${palette.id}-color1'></div>
+            <div class='palette-color' id='${palette.id}-color2'></div>
+            <div class='palette-color' id='${palette.id}-color3'></div>
+            <div class='palette-color' id='${palette.id}-color4'></div>
+            <div class='palette-color' id='${palette.id}-color5'></div>
+          </div>
+        </div>`)
+
+      $(`#${palette.id}-color1`).css('background-color', palette.color_1)
+      $(`#${palette.id}-color2`).css('background-color', palette.color_2)
+      $(`#${palette.id}-color3`).css('background-color', palette.color_3)
+      $(`#${palette.id}-color4`).css('background-color', palette.color_4)
+      $(`#${palette.id}-color5`).css('background-color', palette.color_5)
     })
   })
 }
 
 const postProject = async (event) => {
   event.preventDefault()
-  const removeChars = RegExp(/\W+/)
-  const projectName = $('.project-name-input').val().replace(removeChars, '')
+  const projectName = $('.project-name-input').val()
   const existingProject = projects.find(project => projectName === project.name)
   const paletteObj = {
     name: $('.palette-name-input').val(), 
@@ -113,7 +114,7 @@ const postProject = async (event) => {
       body: JSON.stringify({name: projectName})
     })
     const response = await newProjectPost.json()
-    const paletteName= paletteObj.name.replace(removeChars, '')
+    const paletteName= paletteObj.name
     const newPalettePost = await fetch(`/api/v1/projects/${response.id}/palettes`, {
       method: 'POST',
       headers: {
@@ -139,12 +140,8 @@ const postProject = async (event) => {
 
 const deletePalette = async (event) => {
   if(event.target.className === 'delete-btn'){
-    const paletteName = $(event.target).next().text()
-    const projectName = $(event.target).parent().parent().prev().text()
-    const foundProject = projects.find(project => project.name === projectName)
-    const palettesArray = foundProject.palettes
-    const foundPalette = palettesArray.find(palette => palette.name === paletteName)
-    fetch(`/api/v1/palettes/${foundPalette.id}`, {
+    const paletteId = $(event.target).attr('id')
+    fetch(`/api/v1/palettes/${paletteId}`, {
       method: 'DELETE'})
     $(event.target).parent().remove()
   }
