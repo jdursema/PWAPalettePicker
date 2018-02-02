@@ -1,0 +1,30 @@
+{
+  "short_name": "PalettePicker",
+  "name": "Your favorite color palette chooser",
+  "background_color": "#000000",
+  "theme_color": "#D3D3D3",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "./img/pantone.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "./img/pantone.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "./img/pantone.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./img/pantone.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html"
+}
