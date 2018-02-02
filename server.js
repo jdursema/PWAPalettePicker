@@ -13,6 +13,18 @@ const environment = process.env.NODE_ENV || 'development';
 //have our app use the doc in the public directory
 app.use(express.static(path.join(__dirname, '/public')));
 
+app.set('port', process.env.PORT || 3000);
+const requireHTTPS = (req, res, next) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect('https://' + req.get('host') + req.url);
+  }
+    next();
+};
+
+if(process.env.NODE_ENV === 'production') {
+  app.use(requireHTTPS);
+}
+
 //
 const configuration = require('./knexfile')[environment]
 const database = require('knex')(configuration);
