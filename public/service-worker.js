@@ -1,7 +1,7 @@
 
 this.addEventListener('install', event => {
   event.waitUntil(
-    caches.open('assets-v1').then(cache => {
+    caches.open('project-assets-v1').then(cache => {
       return cache.addAll([
         '/',
         './js/jquery.min.js',
@@ -21,7 +21,7 @@ this.addEventListener('fetch', event => {
 });
 
 this.addEventListener('activate', (event) => {
-  let cacheWhitelist = ['assets-v1'];
+  let cacheWhitelist = ['project-assets-v1'];
 
   event.waitUntil(
     caches.keys().then(keyList => {
@@ -37,8 +37,7 @@ this.addEventListener('activate', (event) => {
 
 
 this.addEventListener('message', (event) => {
-  if (event.data.type === 'add-markdown') {
-    pendingMarkdowns.push(event.data.markdown);
-    self.registration.sync.register('addMarkdown')
+  if (event.data.type === 'add-palette') {
+    self.registration.showNotification(`${event.data.paletteName} was succesfully added!`);
   }
 });
