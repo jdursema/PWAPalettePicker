@@ -164,6 +164,13 @@ const deletePalette = async (event) => {
   }
 }
 
+const sendMessageToSync = markdown => {
+  navigator.serviceWorker.controller.postMessage({ 
+    type: 'add-palette',
+    message: 'You added a palette'
+  });
+};
+
 
 $(document).ready(() =>{
   generatePalette()
