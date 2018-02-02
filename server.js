@@ -1,3 +1,5 @@
+import { request } from 'http';
+
 //import express. Express is a framework the we can use with Node.js that helps simplify server-side functionality.
 const express = require('express');
 //import bodyParser. Body Parser is middleware that parses incoming requests
@@ -14,9 +16,10 @@ const environment = process.env.NODE_ENV || 'development';
 app.use(express.static(path.join(__dirname, '/public')));
 
 app.set('port', process.env.PORT || 3000);
-const requireHTTPS = (req, res, next) => {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect('https://' + req.get('host') + req.url);
+
+const requireHTTPS = (requset, response, next) => {
+  if (request.headers['x-forwarded-proto'] !== 'https') {
+    return response.redirect('https://' + request.get('host') + request.url);
   }
     next();
 };
